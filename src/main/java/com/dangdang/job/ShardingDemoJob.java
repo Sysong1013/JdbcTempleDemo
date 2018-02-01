@@ -13,12 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public class ShardingDemoJob implements SimpleJob {
     private static final Logger errorlog = LoggerFactory.getLogger("application.error");
+
     @Autowired
-    ShardingDemoService shardingDemoService;
+    RawService rawService;
 
     public void execute(ShardingContext shardingContext) {
         try {
-            shardingDemoService.doTest(shardingContext.getShardingItem(), shardingContext.getShardingTotalCount());
+            rawService.doTest(shardingContext.getShardingItem(), shardingContext.getShardingTotalCount());
         } catch (Exception e) {
             errorlog.error("SimpleJob Get An Exception e:", e);
         }

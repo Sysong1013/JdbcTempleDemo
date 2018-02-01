@@ -1,4 +1,4 @@
-package com.dangdang.dao;
+package com.dangdang.rawdao;
 
 import com.dangdang.modle.StockModle;
 import org.apache.ibatis.annotations.Param;
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by songyisong on 2018/1/30.
  */
 @Service
-public interface SelectStockMapper {
+public interface SelectStockMapperRaw {
     @Results({
             @Result(id = true, column = "product_id", property = "productId"),
             @Result(column = "warehouse_id", property = "warehouseId"),
@@ -22,6 +22,6 @@ public interface SelectStockMapper {
             @Result(column = "last_changed_date", property = "lastChangedDate")
     })
     @Select("SELECT product_id,warehouse_id,stock_quantity,post_stock_quantity,last_changed_date " +
-            "FROM sharding where product_id=#{productId} AND warehouse_id=#{warehouseId}")
+            "FROM sharding_0 where product_id=#{productId} AND warehouse_id=#{warehouseId}")
     public List<StockModle> getStock(@Param("productId") long productId, @Param("warehouseId") int warehouseId);
 }

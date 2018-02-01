@@ -4,10 +4,11 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:master-slave="http://shardingjdbc.io/schema/shardingjdbc/masterslave"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
         http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd http://shardingjdbc.io/schema/shardingjdbc/masterslave http://shardingjdbc.io/schema/shardingjdbc/masterslave/master-slave.xsd">
 
     <bean id="prodstockdb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${prodstockdb.Driver}" />
@@ -33,60 +34,9 @@
         <property name="maxWait" value="${prodstockevt.MaxWait}" />
     </bean>
 
-    <!-- 配置好dataSourceRulue,即对数据源进行管理 -->
-    <bean id="dataSourceRule" class="com.dangdang.ddframe.rdb.sharding.api.rule.DataSourceRule">
-        <constructor-arg>
-            <map>
-                <entry key="prodstockdb" value-ref="prodstockdb"/>
-                <entry key="prodstockevt" value-ref="prodstockevt"/>
-            </map>
-        </constructor-arg>
-    </bean>
+    <bean id="randomStrategy" class="io.shardingjdbc.core.api.algorithm.masterslave.RandomMasterSlaveLoadBalanceAlgorithm" />
 
-    <!-- 对t_user表的配置，进行分库配置，逻辑表名为t_user，每个库有实际的三张表 -->
-    <bean id="sharding" class="com.dangdang.ddframe.rdb.sharding.api.rule.TableRule">
-        <constructor-arg value="sharding" index="0"/>
-        <constructor-arg index="1">
-            <list>
-                <value>sharding_0</value>
-                <value>sharding_1</value>
-            </list>
-        </constructor-arg>
-        <constructor-arg index="2" ref="dataSourceRule"/>
-        <constructor-arg index="3" ref="DatabaseShardingStrategy"/>
-        <constructor-arg index="4" ref="TableShardingStrategy"/>
-    </bean>
-
-    <!-- sharding表分库策略 -->
-    <bean id="DatabaseShardingStrategy" class="com.dangdang.ddframe.rdb.sharding.api.strategy.database.DatabaseShardingStrategy">
-        <constructor-arg index="0" value="product_id"/>
-        <constructor-arg index="1">
-            <bean class="com.dangdang.shardingRuler.databaseSharding" />
-        </constructor-arg>
-    </bean>
-
-    <!-- sharding表分表策略 -->
-    <bean id="TableShardingStrategy" class="com.dangdang.ddframe.rdb.sharding.api.strategy.table.TableShardingStrategy">
-        <constructor-arg index="0" value="warehouse_id"/>
-        <constructor-arg index="1">
-            <bean class="com.dangdang.shardingRuler.tableSharding" />
-        </constructor-arg>
-    </bean>
-
-    <!-- 构成分库分表的规则 传入数据源集合和每个表的分库分表的具体规则 -->
-    <bean id="shardingRule" class="com.dangdang.ddframe.rdb.sharding.api.rule.ShardingRule">
-        <constructor-arg index="0" ref="dataSourceRule"/>
-        <constructor-arg index="1">
-            <list>
-                <ref bean="sharding"/>
-            </list>
-        </constructor-arg>
-    </bean>
-
-    <!-- 对datasource进行封装 -->
-    <bean id="shardingDataSource" class="com.dangdang.ddframe.rdb.sharding.api.ShardingDataSource">
-        <constructor-arg ref="shardingRule"/>
-    </bean>
+    <master-slave:data-source id="shardingDataSource" master-data-source-name="prodstockdb" slave-data-source-names="prodstockevt" strategy-ref="randomStrategy" />
 
     <!-- 配置sqlSessionFactory -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -94,13 +44,12 @@
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.dangdang.dao"/>
+        <property name="basePackage" value="com.dangdang.rawdao"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
     <!-- 事务 -->
-    <bean id="transactionManager"
-          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="shardingDataSource" />
     </bean>
 
