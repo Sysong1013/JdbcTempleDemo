@@ -34,13 +34,13 @@ public class RawService {
 
         //System.out.println("成功删除" + deleteStockMapperRaw.deleteStock(productId, warehouseId));//测试删除
 
-//        try {
-//            System.out.println("成功插入" + insertStockMapperRaw.insertStock(productId, warehouseId) + "条数据");//测试插入（品仓唯一键）
-//        } catch (DuplicateKeyException e) {
-//            System.out.println("已经存在对应品仓的数据，请勿重复插入");
-//        }
+        try {
+            System.out.println("成功插入" + insertStockMapperRaw.insertStock(productId, warehouseId) + "条数据");//测试插入（品仓唯一键）
+        } catch (DuplicateKeyException e) {
+            System.out.println("已经存在对应品仓的数据，请勿重复插入");
+        }
 
-        System.out.println(selectStockMapperRaw.getStock(productId, warehouseId));//测试查询
+        //System.out.println(selectStockMapperRaw.getStock(productId, warehouseId));//测试查询
         //hintManager.close();
         //System.out.println("成功更新" + updateStockMapperRaw.updateStock(productId, warehouseId) + "条数据");//测试更新
     }

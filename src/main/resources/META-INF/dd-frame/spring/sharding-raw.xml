@@ -9,7 +9,6 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
         http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd http://shardingjdbc.io/schema/shardingjdbc/masterslave http://shardingjdbc.io/schema/shardingjdbc/masterslave/master-slave.xsd">
-
     <bean id="prodstockdb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${prodstockdb.Driver}" />
         <property name="url" value="${prodstockdb.Url}" />
@@ -21,7 +20,6 @@
         <property name="minIdle" value="${prodstockdb.MinIdle}" />
         <property name="maxWait" value="${prodstockdb.MaxWait}" />
     </bean>
-
     <bean id="prodstockevt" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${prodstockevt.Driver}" />
         <property name="url" value="${prodstockevt.Url}" />
@@ -33,26 +31,19 @@
         <property name="minIdle" value="${prodstockevt.MinIdle}" />
         <property name="maxWait" value="${prodstockevt.MaxWait}" />
     </bean>
-
     <bean id="randomStrategy" class="io.shardingjdbc.core.api.algorithm.masterslave.RandomMasterSlaveLoadBalanceAlgorithm" />
-
     <master-slave:data-source id="shardingDataSource" master-data-source-name="prodstockdb" slave-data-source-names="prodstockevt" strategy-ref="randomStrategy" />
-
     <!-- 配置sqlSessionFactory -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="shardingDataSource"/>
     </bean>
-
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.dangdang.rawdao"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
-
     <!-- 事务 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="shardingDataSource" />
     </bean>
-
     <tx:annotation-driven transaction-manager="transactionManager" />
-
 </beans>
