@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:reg="http://www.dangdang.com/schema/ddframe/reg"
-       xmlns:job="http://www.dangdang.com/schema/ddframe/job"
+       xmlns:job="http://www.dangdang.com/schema/ddframe/job" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans.xsd 
                         http://www.springframework.org/schema/context 
@@ -11,8 +11,7 @@
                         http://www.dangdang.com/schema/ddframe/reg 
                         http://www.dangdang.com/schema/ddframe/reg/reg.xsd 
                         http://www.dangdang.com/schema/ddframe/job 
-                        http://www.dangdang.com/schema/ddframe/job/job.xsd 
-                        ">
+                        http://www.dangdang.com/schema/ddframe/job/job.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <reg:zookeeper id="regCenter" server-lists="${serverLists}" namespace="${namespace}"
                    base-sleep-time-milliseconds="${baseSleepTimeMilliseconds}"
@@ -29,5 +28,19 @@
             overwrite="${job.simple.overwrite}"
             disabled="${job.simple.disabled}"
             description="${job.simple.description}"/>
+
+    <aop:aspectj-autoproxy/>
+
+    <!--<bean id="setLog" class="com.dangdang.aop.SetLog"/>-->
+
+    <!--<aop:config>-->
+        <!--<aop:pointcut id="update" expression="execution(* com.dangdang.rawdao.UpdateStockMapperRaw.updateStock(..))" />-->
+        <!--<aop:pointcut id="insert" expression="execution(* com.dangdang.rawdao.InsertStockMapperRaw.insertStock(..))" />-->
+
+        <!--<aop:aspect id="steLog" ref="setLog">-->
+            <!--<aop:after method="updatelog" pointcut-ref="update"/>-->
+            <!--<aop:after method="insertlog" pointcut-ref="insert"/>-->
+        <!--</aop:aspect>-->
+    <!--</aop:config>-->
 
 </beans>

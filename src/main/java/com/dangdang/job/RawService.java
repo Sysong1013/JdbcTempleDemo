@@ -42,6 +42,6 @@ public class RawService {
 
         //System.out.println(selectStockMapperRaw.getStock(productId, warehouseId));//测试查询
         //hintManager.close();
-        //System.out.println("成功更新" + updateStockMapperRaw.updateStock(productId, warehouseId) + "条数据");//测试更新
+        System.out.println("成功更新" + updateStockMapperRaw.updateStock(productId, warehouseId) + "条数据");//测试更新
     }
 }
