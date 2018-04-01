@@ -43,7 +43,7 @@
         </constructor-arg>
     </bean>
 
-    <!-- 对t_user表的配置，进行分库配置，逻辑表名为t_user，每个库有实际的三张表 -->
+    <!-- 对sharding表配置，逻辑表名为sharding，实际上分为sharding_0和sharding_1 -->
     <bean id="sharding" class="com.dangdang.ddframe.rdb.sharding.api.rule.TableRule">
         <constructor-arg value="sharding" index="0"/>
         <constructor-arg index="1">
@@ -57,7 +57,7 @@
         <constructor-arg index="4" ref="TableShardingStrategy"/>
     </bean>
 
-    <!-- sharding表分库策略 -->
+    <!-- sharding表分库策略,根据product_id -->
     <bean id="DatabaseShardingStrategy" class="com.dangdang.ddframe.rdb.sharding.api.strategy.database.DatabaseShardingStrategy">
         <constructor-arg index="0" value="product_id"/>
         <constructor-arg index="1">
@@ -65,7 +65,7 @@
         </constructor-arg>
     </bean>
 
-    <!-- sharding表分表策略 -->
+    <!-- sharding表分表策略,根据warehouse_id -->
     <bean id="TableShardingStrategy" class="com.dangdang.ddframe.rdb.sharding.api.strategy.table.TableShardingStrategy">
         <constructor-arg index="0" value="warehouse_id"/>
         <constructor-arg index="1">
